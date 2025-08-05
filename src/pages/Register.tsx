@@ -4,46 +4,74 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import API from "@/api";
 
-const Signup = () => {
+const Register = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
+    user_type: "student", // Default user type
   });
   const { toast } = useToast();
+  const [message, setMessage] = useState("");
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
+      setMessage("Passwords do not match");
       toast({
-        title: "Password Mismatch",
-        description: "Passwords do not match. Please try again.",
+        title: "Passwords do not match",
+        description: "Please make sure both password fields are identical.",
         variant: "destructive",
       });
       return;
     }
 
-    // Demo signup logic
-    if (Object.values(formData).every(field => field.trim() !== "")) {
+    if (Object.values(formData).some(field => field.trim() === "")) {
+      setMessage("Please fill in all required fields.");
+      toast({
+        title: "Registration Failed",
+        description: "All fields are required.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setMessage(""); // Clear previous messages
+    console.log("Registering with data:", formData);
+
+    try {
+      const response = await API.post("/api/auth/register", {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        user_type: formData.user_type,
+      });
+
+      console.log("Signup Response:", response.data);
+      setMessage("Account Created Successfully");
+      
       toast({
         title: "Account Created Successfully",
         description: "Welcome to Sri Lankan Educational Revolution! Please check your email to verify your account.",
       });
-    } else {
+    } catch (error: any) {
+      console.error("Registration Error:", error);
+      setMessage("Registration Failed");
       toast({
         title: "Registration Failed",
-        description: "Please fill in all required fields.",
+        description: error.response?.data?.message || "Registration Failed.",
         variant: "destructive",
       });
     }
@@ -83,7 +111,7 @@ const Signup = () => {
         </CardHeader>
         
         <CardContent>
-          <form onSubmit={handleSignup} className="space-y-5">
+          <form onSubmit={handleRegister} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="firstName" className="text-sm font-medium text-gray-700">
@@ -183,6 +211,11 @@ const Signup = () => {
             <Button type="submit" variant="hero" size="lg" className="w-full h-12 text-base font-semibold">
               Create Account
             </Button>
+            {message && (
+              <div className="mt-4 text-center text-sm text-gray-600">
+                {message}
+              </div>
+            )}
           </form>
         </CardContent>
 
@@ -203,4 +236,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Register;
