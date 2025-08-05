@@ -4,20 +4,42 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import API from "@/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
   const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Demo login logic
     if (email && password) {
-      toast({
-        title: "Login Successful",
-        description: "Welcome back to Sri Lankan Educational Revolution!",
-      });
+      try {
+        const response = await API.post("/api/auth/login", { email, password });
+        console.log("Login Response:", response.data);
+
+        localStorage.setItem("token", response.data.token); // Store token in local storage
+        localStorage.setItem("refresh_token", response.data.refresh_token); // Store refresh token
+        localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user data
+        
+        setMessage("Login Successful");
+        toast({
+          title: "Login Successful",
+          description: "Welcome back to Sri Lankan Educational Revolution!",
+        });
+
+        // Redirect to home or dashboard page
+        window.location.href = "/";
+
+      } catch (error : any) {
+        setMessage("Login Failed");
+        toast({
+          title: "Login Failed",
+          description: error.response?.data?.message || error.response?.data?.error || "Login Failed.",
+          variant: "destructive",
+        });
+      }
     } else {
       toast({
         title: "Login Failed",
@@ -105,13 +127,18 @@ const Login = () => {
             <Button type="submit" variant="hero" size="lg" className="w-full h-12 text-base font-semibold">
               Sign In
             </Button>
+            {message && (
+              <div className="mt-4 text-center text-sm text-gray-600">
+                {message}
+              </div>
+            )}
           </form>
         </CardContent>
 
         <CardFooter className="flex flex-col space-y-4 text-center">
           <div className="text-sm text-gray-600">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-primary font-semibold hover:text-primary/80 transition-colors">
+            <Link to="/register" className="text-primary font-semibold hover:text-primary/80 transition-colors">
               Create Account
             </Link>
           </div>
