@@ -91,7 +91,7 @@ const Navbar = () => {
                 <Link to="/login">
                   <Button variant="outline" size="sm">Sign In</Button>
                 </Link>
-                <Link to="/signup">
+                <Link to="/register">
                   <Button
                     size="sm"
                     className="bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--primary-glow))] transition-colors"
