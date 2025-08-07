@@ -71,16 +71,16 @@ const Index = () => {
                            !course.zScore || 
                            parseFloat(userZScore) >= course.zScore;
       
-      console.log(`Filtering course ${course.title}:`, {
-        matchesSearch,
-        matchesLevel,
-        matchesAge,
-        matchesCategory,
-        matchesInstitutionType,
-        matchesLocation,
-        matchesStream,
-        matchesZScore
-      });
+      // console.log(`Filtering course ${course.title}:`, {
+      //   matchesSearch,
+      //   matchesLevel,
+      //   matchesAge,
+      //   matchesCategory,
+      //   matchesInstitutionType,
+      //   matchesLocation,
+      //   matchesStream,
+      //   matchesZScore
+      // });
       
       return matchesSearch && matchesLevel && matchesAge && matchesCategory && 
              matchesInstitutionType && matchesLocation && matchesStream && matchesZScore;
