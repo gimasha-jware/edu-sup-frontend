@@ -19,9 +19,13 @@ const Login = () => {
         const response = await API.post("/api/auth/login", { email, password });
         console.log("Login Response:", response.data);
 
-        localStorage.setItem("token", response.data.token); // Store token in local storage
+        localStorage.setItem("token", response.data.access_token); // Store token in local storage
         localStorage.setItem("refresh_token", response.data.refresh_token); // Store refresh token
         localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user data
+        
+        console.log("User data stored in local storage:", response.data.user);
+        console.log("Access token stored in local storage:", response.data.access_token);
+        console.log("Refresh token stored in local storage:", response.data.refresh_token);
         
         setMessage("Login Successful");
         toast({
@@ -30,6 +34,8 @@ const Login = () => {
         });
 
         // Redirect to home or dashboard page
+        // console.log("Access token:", response.data.access_token);
+        // debugger;
         window.location.href = "/";
 
       } catch (error : any) {
