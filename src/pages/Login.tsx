@@ -22,7 +22,7 @@ const Login = () => {
         localStorage.setItem("token", response.data.access_token); // Store token in local storage
         localStorage.setItem("refresh_token", response.data.refresh_token); // Store refresh token
         localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user data
-        
+
         console.log("User data stored in local storage:", response.data.user);
         console.log("Access token stored in local storage:", response.data.access_token);
         console.log("Refresh token stored in local storage:", response.data.refresh_token);
