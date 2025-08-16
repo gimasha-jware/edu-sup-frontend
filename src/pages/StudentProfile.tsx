@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,16 +34,9 @@ interface ResultSheet {
 const StudentProfile = () => {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState<StudentProfile>({
-    email: "student@edusrilanka.com",
-    first_name: "Samantha",
-    last_name: "Perera",
-    age: "20",
-    qualification_level: "A/L"
-  });
-
-  const [editedProfile, setEditedProfile] = useState<StudentProfile>(profile);
-  const [resultSheets, setResultSheets] = useState<ResultSheet[]>([
+  const [profile, setProfile] = useState<StudentProfile | null>(null);
+  const [editedProfile, setEditedProfile] = useState<StudentProfile | null>(null);
+    const [resultSheets, setResultSheets] = useState<ResultSheet[]>([
     {
       id: "1",
       filename: "AL_Results_2023.pdf",
@@ -54,6 +48,40 @@ const StudentProfile = () => {
       ]
     }
   ]);
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log("Token:", token);
+    if (!token) {
+      toast({
+        title: "Unauthorized",
+        description: "Please log in to access your profile.",
+      });
+      return;
+    }
+
+    axios.get("/api/student/profile", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => {
+      console.log("Profile API response:", response.data);
+      setProfile(response.data);
+      setEditedProfile(response.data);
+    })
+    .catch((error) => {
+      toast({
+        title: "Error",
+        description: "Failed to fetch profile information.",
+      });
+    });
+  }, [toast]);
+
+  if (!profile) {
+    return <div className="text-center p-6">Loading profile...</div>;
+  }
+
 
   const handleSave = () => {
     setProfile(editedProfile);
