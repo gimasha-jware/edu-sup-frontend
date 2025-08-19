@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import API from "@/api";
+import { loginWithGoogle } from "@/services/auth";
+import { FcGoogle } from "react-icons/fc";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -77,6 +79,27 @@ const Register = () => {
     }
   };
 
+  const handleGoogleRegister = async () => {
+    try {
+      const user = await loginWithGoogle(); // backend will auto-create user if new
+      localStorage.setItem("user", JSON.stringify(user));
+
+      toast({
+        title: "Account Created Successfully",
+        description: `Welcome, ${user.name || "User"}!`,
+      });
+
+      window.location.href = "/";
+    } catch (error: any) {
+      console.error("Google register failed:", error);
+      toast({
+        title: "Google Registration Failed",
+        description: error.message || "Something went wrong with Google sign up.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-primary flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background decorative elements */}
@@ -106,7 +129,7 @@ const Register = () => {
             Join the Revolution
           </CardTitle>
           <CardDescription className="text-base">
-            Create your account to access courses from O/L to University level
+            Create your account to access courses
           </CardDescription>
         </CardHeader>
         
@@ -220,6 +243,16 @@ const Register = () => {
         </CardContent>
 
         <CardFooter className="flex flex-col space-y-4 text-center">
+          <Button
+            type="button"
+            onClick={handleGoogleRegister}
+            variant="outline"
+            size="lg"
+            className="w-full flex items-center justify-center gap-2"
+          >
+            <FcGoogle size={20} />
+            Continue with Google
+          </Button>
           <div className="text-sm text-gray-600">
             Already have an account?{" "}
             <Link to="/login" className="text-primary font-semibold hover:text-primary/80 transition-colors">
