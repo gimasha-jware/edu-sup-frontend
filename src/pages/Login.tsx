@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import API from "@/api";
+import { loginWithGoogle } from "@/services/auth";
+import { FcGoogle} from "react-icons/fc";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,6 +14,7 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const { toast } = useToast();
 
+  // Handle backend login with email/password
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email && password) {
@@ -50,6 +53,31 @@ const Login = () => {
       toast({
         title: "Login Failed",
         description: "Please enter both email and password.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle Google login with Firebase
+  const handleGoogleLogin = async () => {
+    try {
+      const user = await loginWithGoogle();
+      console.log("Google Login Response:", user);
+
+      // Example: store user + token from Firebase
+      localStorage.setItem("user", JSON.stringify(user));
+
+      toast({
+        title: "Login Successful",
+        description: `Welcome, ${user.name || "User"}!`,
+      });
+
+      window.location.href = "/";
+    } catch (error: any) {
+      console.error("Google login failed:", error);
+      toast({
+        title: "Google Login Failed",
+        description: error.message || "Something went wrong with Google login.",
         variant: "destructive",
       });
     }
@@ -130,9 +158,23 @@ const Login = () => {
               </Link>
             </div>
 
+            {/* Normal Sign In Button */}
             <Button type="submit" variant="hero" size="lg" className="w-full h-12 text-base font-semibold">
               Sign In
             </Button>
+
+            {/* Google Sign In Button */}
+            <Button
+              type="button"
+              onClick={handleGoogleLogin}
+              variant="outline"
+              size="lg"
+              className="w-full h-12 text-base font-semibold flex items-center justify-center gap-2"
+            >
+              <FcGoogle className="w-6 h-6" />
+              Sign in with Google
+            </Button>
+
             {message && (
               <div className="mt-4 text-center text-sm text-gray-600">
                 {message}
