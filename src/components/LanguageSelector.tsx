@@ -15,9 +15,9 @@ const LanguageSelector = () => {
 
   return (
     <div className="flex items-center gap-2">
-      <Globe className="h-4 w-4 text-white" />
+      <Globe className="h-4 w-4 text-black" />
       <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'si' | 'ta')}>
-        <SelectTrigger className="w-auto border-white/20 bg-white/10 text-white hover:bg-white/20">
+        <SelectTrigger className="w-auto border-black/20 bg-black/10 text-black hover:bg-black/20">
           <SelectValue placeholder={t('selectLanguage')} />
         </SelectTrigger>
         <SelectContent>
