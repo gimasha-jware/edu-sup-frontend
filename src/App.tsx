@@ -11,7 +11,6 @@ import CourseDetails from "./pages/CourseDetails";
 import NotFound from "./pages/NotFound";
 import StudentProfile from "./pages/StudentProfile";
 import CreateCourseForm from "./pages/CreateCourseForm";
-import UpdateCourseForm from "./pages/UpdateCourseForm";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +29,6 @@ const App = () => (
             <Route path="/profile" element={<StudentProfile />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/create-form" element={<CreateCourseForm />} />
-            <Route path="/update-form/:id" element={<UpdateCourseForm />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
